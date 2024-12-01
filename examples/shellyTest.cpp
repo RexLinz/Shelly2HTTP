@@ -1,16 +1,36 @@
 #include <Arduino.h>
 #include <WiFi.h>
+#include <ESPmDNS.h>
 // JSON library imported from https://arduinojson.org
 // used to demonstrate more complex parsing of JSON strings returned by shelly devices
 #include <ArduinoJson.h>
-#include "network.h"
+#include "network.h" // IP addresses and passwords
 #include "shellyDevice.h"
-#include "myShelly.h" // IP addresses and passwords
 
-ShellyPlugPlusS    plugS_1(PLUGS1IP, ShellyPASS);
-ShellyPlus1PM      shelly1_1(SHELLY11IP); // without authentication
+ShellyPlus1PM      shelly1_1(SHELLY11IP); // device without authentication
 ShellyPlus2PMcover blindControl(BLINDIP, ShellyPASS);
+ShellyPlugPlusS    plugS_1(PLUGS1IP, ShellyPASS);
 ShellyPro3EM3phase gridSupply(GRIDIP, ShellyPASS);
+
+  // connect to WiFi network
+void connectWiFi()
+{
+  Serial.print("connecting to WiFi ");
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      Serial.print(".");
+  }
+  Serial.print("\rIP Address ");
+  Serial.print(WiFi.localIP());
+
+  // publish hostname
+  if (MDNS.begin(WIFI_HOST)) {
+    Serial.print(", Hostname ");
+    Serial.print(WiFi.getHostname());
+  }
+  Serial.println();
+}
 
 void setup() 
 {
@@ -22,13 +42,12 @@ void setup()
     while (Serial.available())
         Serial.read(); // clear input
 
-    setupNetwork(); // prepare WiFi networks to be connected
-    while (!connectWiFi(10000))
-        ; // do not continue until WiFi is connected
-    plugS_1.name      = "PlugS #1";
-    shelly1_1.name    = "Shelly1PM #1";
-    blindControl.name = "Living room blinds";
-    gridSupply.name   = "EM3 grid supply";
+    connectWiFi();
+
+    shelly1_1.name    = "Shelly 1PM - #1";
+    blindControl.name = "Shelly Plus 2PM - Living room blinds";
+    plugS_1.name      = "Shelly PlugPlusS - #1";
+    gridSupply.name   = "Shelly Pro 3EM - grid supply";
 }
 
 void loop() 
@@ -42,11 +61,11 @@ void loop()
         float floatVal;
         switch (c)
         { 
-        case '1': // ShellyPLus1PM #1 Switch status
+        case '1': // ShellyPlus 1PM #1 Switch status
             Serial.println(shelly1_1.name);
             ShellyResponse = shelly1_1.SwitchGetStatus(); //Switch.GetStatus?id=0
             Serial.println(ShellyResponse); 
-            // extract and display some fields
+            // extract and display some fields using ArduinoJson parser 
             if (ShellyResponse.length() >= 80) // expect some minimum length to be valid
             {
                 deserializeJson(shelly, ShellyResponse);
@@ -63,7 +82,7 @@ void loop()
             Serial.println("  temperature  = " + String(shelly1_1.TemperatureDegC()) + " degC");
             Serial.println("  rssi         = " + String(shelly1_1.WiFiRSSI()) + "dB");
             break;
-        case '2': // ShellyPlus2PM "Wohnzimmer"
+        case '2': // ShellyPlus2PM "living room blinds"
             Serial.println(blindControl.name);
             ShellyResponse = blindControl.CoverGetStatus();  // cover status
             Serial.println(ShellyResponse); 
@@ -71,7 +90,7 @@ void loop()
             Serial.println("  temperature  = " + String(blindControl.TemperatureDegC()) + " degC");
             Serial.println("  rssi         = " + String(blindControl.WiFiRSSI()) + " dB");
             break;
-        case 'd': // ShellyPlugS "diverse"
+        case 'p': // ShellyPlugS
             Serial.println(plugS_1.name);
             ShellyResponse = plugS_1.shellyGetStatus();  // cover status
             Serial.println(ShellyResponse); 
