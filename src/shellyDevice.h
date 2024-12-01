@@ -21,7 +21,7 @@ class shellyDevice
 protected:
     shellyDevice() {}; // do not allow direct use
 public:
-    // set server IP and password in case this device is requireing authentication
+    // set server IP and password in case this device is using authentication
     shellyDevice(String serverIP, String password="") :  
         _server("http://" + serverIP), 
         _user("admin"), 
