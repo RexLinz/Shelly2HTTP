@@ -1,4 +1,4 @@
-# Shelly
+# Shelly2HTTP
 
 ## Library to access Shelly Gen2+ devices from ESP32 via HTTP rpc calls supporting digest authorization
 
