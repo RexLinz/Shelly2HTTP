@@ -11,17 +11,15 @@ While it works well from the browser I have not been able to supply user / passw
 **NOTE:** For each class implemented the reference to the respective section
 of the shelly API documentation is given below.
 
-**NOTE:** Just some functions from the Shelly API are implemented at the moment,
-actually just functions to read from shelly devices at all.
-Feel free to add other functionality according to the functions already done.
+**NOTE:** Just some functions from the Shelly API are implemented at the moment - actually only functions to **read** from shelly Gen2 devices I own. Feel free to add other functionality according to the functions already done and / or combine COMPONENTS available to implement other Shelly Gen2+ devices.
 
 [Full Shelly Gen2+ API documentation](https://shelly-api-docs.shelly.cloud/gen2/)
 
-## library concept
+## Library concept
 
 Shelly DEVICES are based on COMPONENTS, each one defining a certain functionality. Actual devices combine several of this components.
 
-This stucture is followed in the implementation starting with class ShellyDevice dealing with the basic communication only.
+This stucture is followed in the implementation starting with class shellyDevice dealing with the basic communication only.
 
 **NOTE** It's not intended to use class shellyDevice or one of the components directly in an application. Use one of the SHELLY DEVICES below or combine COMPONENTS to create a new device similar to the existing ones.
 
@@ -33,12 +31,11 @@ Communication with and basic functions of all shelly Gen2+ devices
 
 <https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Shelly>
 
-Any shelly device is combining functionality of shellyDevice with additional endpoints like input, switch, cover, energy monitoring
+Any shelly device is combining functionality of shellyDevice with additional COMPONENTS like input, switch, cover, energy monitoring
 
 ### SHELLY COMPONENTS
 
-These classes define functionality like WiFi, switch, input, meter, ...  
-which could not be used directly and will becombined to DEVICE classes later
+These classes define functionality like WiFi, switch, input, meter, ... which could not be used directly and will becombined to DEVICE classes later
 
 <https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Introduction>
 
@@ -80,18 +77,18 @@ Multiple phase totalized energy monitoring, e.g. available in ShellyPro3EM in th
 
 #### class shelly1EM
 
-single phase energy monitoring, e.g. available 3 times in ShellyPro3EM if in monophase mode
+Single phase energy monitoring, e.g. available 3 times in ShellyPro3EM if in monophase mode
 
 <https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/EM1>
 
 ### SHELLY DEVICES
 
-Actual devices assemble basic functions with extensions
+Actual devices assemble basic functions with COMPONENTS
 
 #### class ShellyGen2
 
-Basic functionality of all Gen2+ devices
-Could be used instead of the specific device classes below to access functions of shellyDevice if you handle all your requests by yourself
+Basic functionality of all Gen2+ devices.  
+Could be used instead of the specific device classes below to access functions of shellyDevice if you handle all your requests by yourself.
 
 <https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Shelly>
 
